@@ -91,7 +91,8 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
+vim.opt.termguicolors = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -102,7 +103,7 @@ vim.g.have_nerd_font = false
 vim.opt.number = true
 -- You can also add relative line numbers, to help with jumping.
 --  Experiment for yourself to see if you like it!
--- vim.opt.relativenumber = true
+vim.opt.relativenumber = true
 
 -- Enable mouse mode, can be useful for resizing splits for example!
 vim.opt.mouse = 'a'
@@ -175,6 +176,8 @@ vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagn
 -- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })
 
+-- map visual block
+vim.keymap.set('n', '<leader>v', '<cmd>VisualBlock<CR>')
 -- TIP: Disable arrow keys in normal mode
 -- vim.keymap.set('n', '<left>', '<cmd>echo "Use h to move!!"<CR>')
 -- vim.keymap.set('n', '<right>', '<cmd>echo "Use l to move!!"<CR>')
@@ -190,6 +193,8 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+vim.keymap.set('v', 'J', ":m '>+1<CR>gv=gv")
+vim.keymap.set('v', 'K', ":m '<-2<CR>gv=gv")
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
 
@@ -664,7 +669,10 @@ require('lazy').setup({
       }
     end,
   },
-
+  {
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+  },
   { -- Autoformat
     'stevearc/conform.nvim',
     event = { 'BufWritePre' },
@@ -775,11 +783,11 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
+          -- ['<C-y>'] = cmp.mapping.confirm { select = true },
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
-          --['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<CR>'] = cmp.mapping.confirm { select = true },
           --['<Tab>'] = cmp.mapping.select_next_item(),
           --['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
@@ -824,27 +832,73 @@ require('lazy').setup({
     end,
   },
 
-  { -- You can easily change to a different colorscheme.
-    -- Change the name of the colorscheme plugin below, and then
-    -- change the command in the config to whatever the name of that colorscheme is.
-    --
-    -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
-    priority = 1000, -- Make sure to load this before all the other start plugins.
-    init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+  -- { -- You can easily change to a different colorscheme.
+  --   -- Change the name of the colorscheme plugin below, and then
+  --   -- change the command in the config to whatever the name of that colorscheme is.
+  --   --
+  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  --   'scottmckendry/cyberdream.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   -- 'folke/tokyonight.nvim',
+  --   -- priority = 1000, -- Make sure to load this before all the other start plugins.
+  --   init = function()
+  --     -- Load the colorscheme here.
+  --     -- Like many other themes, this one has different styles, and you could load
+  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
+  --     -- vim.cmd.colorscheme 'tokyonight-night'
+  --     vim.cmd.colorscheme 'cyberdream'
 
-      -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
+  --     -- You can configure highlights by doing something like:
+  --     vim.cmd.hi 'Comment gui=none'
+  --   end,
+  -- },
+  {
+    'scottmckendry/cyberdream.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('cyberdream').setup {
+        transparent = true,
+        italic_comments = true,
+        hide_fillchars = false,
+        borderless_telescope = { border = true, style = 'nvchad' },
+        terminal_colors = true,
+        theme = {
+          variant = 'default',
+        },
+      }
+      vim.cmd 'colorscheme cyberdream'
     end,
   },
+  -- {
+  --   'AlexvZyl/nordic.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('nordic').load()
+  --     vim.cmd.colorscheme 'nordic'
+  --   end,
+  -- },
+  -- {
+  --   'rebelot/kanagawa.nvim',
+  --   lazy = false,
+  --   priority = 1000,
+  --   config = function()
+  --     require('kanagawa').setup {
 
+  --       -- Customize your theme here
+  --       -- dimInactive = true,
+  --       theme = 'wave',
+  --       background = {
+  --         dark = 'wave',
+  --       },
+  --     }
+  --     vim.cmd.colorscheme 'kanagawa'
+  --   end,
+  -- },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
-
   { -- Collection of various small independent plugins/modules
     'echasnovski/mini.nvim',
     config = function()
@@ -908,6 +962,118 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
+  {
+    'nvim-tree/nvim-web-devicons',
+  },
+  {
+    'romgrk/barbar.nvim',
+
+    requires = 'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+    },
+
+    vim.keymap.set('n', '<leader><Tab>', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<Tab>', '<Cmd>BufferNext<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b<', '<Cmd>BufferMovePrevious<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b>', '<Cmd>BufferMoveNext<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b1', '<Cmd>BufferGoto 1<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b2', '<Cmd>BufferGoto 2<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b3', '<Cmd>BufferGoto 3<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b4', '<Cmd>BufferGoto 4<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b5', '<Cmd>BufferGoto 5<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b6', '<Cmd>BufferGoto 6<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b7', '<Cmd>BufferGoto 7<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b8', '<Cmd>BufferGoto 8<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b9', '<Cmd>BufferGoto 9<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b0', '<Cmd>BufferLast<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'bp', '<Cmd>BufferPin<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<C-p>', '<Cmd>BufferPick<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'bc', '<Cmd>BufferClose<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bn', '<Cmd>BufferOrderByName<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bd', '<Cmd>BufferOrderByDirectory<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bl', '<Cmd>BufferOrderByLanguage<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', { noremap = true, silent = true }),
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      animation = true,
+      -- insert_at_start = true,
+      -- …etc.
+    },
+    config = function()
+      require('barbar').setup {
+        icons = {
+          filetype = {
+            enabled = false,
+          },
+        },
+      }
+    end,
+
+    version = '^1.0.0', -- optional: only update when a new 1.x version is released
+  },
+  {
+    'levouh/tint.nvim',
+    config = function()
+      require('tint').setup {
+        tint = -50, -- Darken colors, use a positive value to brighten
+        -- saturation = 0.6, -- Saturation to preserve
+        tint_background_colors = true, -- Tint background portions of highlight groups
+        highlight_ignore_patterns = { 'WinSeparator', 'Status.*' }, -- Highlight group patterns to ignore
+        window_ignore_function = function(winid)
+          local bufid = vim.api.nvim_win_get_buf(winid)
+          local buftype = vim.api.nvim_buf_get_option(bufid, 'buftype')
+          local floating = vim.api.nvim_win_get_config(winid).relative ~= ''
+          -- Do not tint `terminal` or floating windows, tint everything else
+          return buftype == 'terminal' or floating
+        end,
+      }
+    end,
+  },
+  -- floating terminal setting
+
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    config = function()
+      require('toggleterm').setup {
+        size = 20,
+        open_mapping = [[<c-\>]],
+        hide_numbers = false,
+        shade_filetypes = {},
+        shade_terminals = true,
+        shading_factor = 2,
+        start_in_insert = true,
+        insert_mappings = true,
+        terminal_mappings = true,
+        persist_size = true,
+        direction = 'float',
+        close_on_exit = false,
+        shell = vim.o.shell,
+        float_opts = {
+          border = 'curved',
+          winblend = 3,
+        },
+        vim.keymap.set('n', '<leader>tt', ':ToggleTerm<CR>', { desc = 'Toggle Terminal' }),
+        vim.keymap.set('n', '<leader>tn', ':ToggleTerm direction=float<CR>', { desc = 'New Floating Terminal' }),
+        vim.keymap.set('n', '<leader>th', ':ToggleTerm direction=horizontal<CR>', { desc = 'New Horizontal Terminal' }),
+        vim.keymap.set('n', '<leader>tv', ':ToggleTerm direction=vertical<CR>', { desc = 'New Vertical Terminal' }),
+        vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]], { desc = 'Exit Terminal Mode' }),
+        -- more setting
+        vim.keymap.set('t', 'jk', [[<C-\><C-n>]], { buffer = 0 }),
+        vim.keymap.set('t', '<C-h>', [[<Cmd>wincmd h<CR>]], { buffer = 0 }),
+        vim.keymap.set('t', '<C-j>', [[<Cmd>wincmd j<CR>]], { buffer = 0 }),
+        vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], { buffer = 0 }),
+        vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], { buffer = 0 }),
+        vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], { buffer = 0 }),
+      }
+    end,
+  },
+  { 'ThePrimeagen/vim-be-good' },
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -917,12 +1083,12 @@ require('lazy').setup({
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug',
-  -- require 'kickstart.plugins.indent_line',
-  -- require 'kickstart.plugins.lint',
-  -- require 'kickstart.plugins.autopairs',
-  -- require 'kickstart.plugins.neo-tree',
-  -- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
+  require 'kickstart.plugins.debug',
+  require 'kickstart.plugins.indent_line',
+  require 'kickstart.plugins.lint',
+  require 'kickstart.plugins.autopairs',
+  require 'kickstart.plugins.neo-tree',
+  require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
 
   -- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --    This is the easiest way to modularize your config.
@@ -951,6 +1117,5 @@ require('lazy').setup({
     },
   },
 })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
