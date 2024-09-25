@@ -832,6 +832,73 @@ require('lazy').setup({
     end,
   },
 
+  {
+    'romgrk/barbar.nvim',
+    requires = 'nvim-tree/nvim-web-devicons',
+    -- OPTIONAL: for file icons
+    dependencies = {
+      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
+    },
+    vim.keymap.set('n', '<leader><Tab>', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<Tab>', '<Cmd>BufferNext<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b<', '<Cmd>BufferMovePrevious<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b>', '<Cmd>BufferMoveNext<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b1', '<Cmd>BufferGoto 1<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b2', '<Cmd>BufferGoto 2<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b3', '<Cmd>BufferGoto 3<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b4', '<Cmd>BufferGoto 4<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b5', '<Cmd>BufferGoto 5<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b6', '<Cmd>BufferGoto 6<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b7', '<Cmd>BufferGoto 7<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b8', '<Cmd>BufferGoto 8<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b9', '<Cmd>BufferGoto 9<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'b0', '<Cmd>BufferLast<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'bp', '<Cmd>BufferPin<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<C-p>', '<Cmd>BufferPick<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', 'bc', '<Cmd>BufferClose<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bn', '<Cmd>BufferOrderByName<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bd', '<Cmd>BufferOrderByDirectory<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bl', '<Cmd>BufferOrderByLanguage<CR>', { noremap = true, silent = true }),
+    vim.keymap.set('n', '<leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', { noremap = true, silent = true }),
+    init = function()
+      vim.g.barbar_auto_setup = false
+    end,
+    vim.cmd [[
+  highlight BufferCurrent guibg=NONE gui=bold,
+  highlight BufferCurrentIndex guibg=NONE gui=bold,
+  highlight BufferCurrentMod guibg=NONE gui=bold,
+  highlight BufferCurrentSign guibg=NONE gui=bold,
+  highlight BufferCurrentTarget guibg=NONE gui=bold,
+  highlight BufferTabpages guibg=NONE,
+  highlight BufferTabpageFill guibg=NONE gui=NONE,
+  ]],
+    vim.api.nvim_create_autocmd('Colorscheme', {
+      group = vim.api.nvim_create_augroup('config_custom_highlights', {}),
+      callback = function()
+        -- set your highlights here
+        vim.api.nvim_set_hl(0, 'BufferTabpageFill', { fg = '#ffffff' })
+      end,
+    }),
+    opts = {
+      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
+      animation = true,
+      tabpages = true,
+      -- insert_at_start = true,
+      -- -- …etc.
+    },
+    config = function()
+      require('barbar').setup {
+        icons = {
+          buffer_number = false,
+          filetype = {
+            enabled = true,
+          },
+        },
+      }
+    end,
+    version = '^1.0.0', -- optional: only update when a new 1.x version is released
+  },
   -- { -- You can easily change to a different colorscheme.
   --   -- Change the name of the colorscheme plugin below, and then
   --   -- change the command in the config to whatever the name of that colorscheme is.
@@ -964,57 +1031,6 @@ require('lazy').setup({
 
   {
     'nvim-tree/nvim-web-devicons',
-  },
-  {
-    'romgrk/barbar.nvim',
-
-    requires = 'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
-    dependencies = {
-      'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
-    },
-
-    vim.keymap.set('n', '<leader><Tab>', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<Tab>', '<Cmd>BufferNext<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b<', '<Cmd>BufferMovePrevious<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b>', '<Cmd>BufferMoveNext<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b1', '<Cmd>BufferGoto 1<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b2', '<Cmd>BufferGoto 2<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b3', '<Cmd>BufferGoto 3<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b4', '<Cmd>BufferGoto 4<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b5', '<Cmd>BufferGoto 5<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b6', '<Cmd>BufferGoto 6<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b7', '<Cmd>BufferGoto 7<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b8', '<Cmd>BufferGoto 8<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b9', '<Cmd>BufferGoto 9<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'b0', '<Cmd>BufferLast<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'bp', '<Cmd>BufferPin<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<C-p>', '<Cmd>BufferPick<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', 'bc', '<Cmd>BufferClose<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<leader>bb', '<Cmd>BufferOrderByBufferNumber<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<leader>bn', '<Cmd>BufferOrderByName<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<leader>bd', '<Cmd>BufferOrderByDirectory<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<leader>bl', '<Cmd>BufferOrderByLanguage<CR>', { noremap = true, silent = true }),
-    vim.keymap.set('n', '<leader>bw', '<Cmd>BufferOrderByWindowNumber<CR>', { noremap = true, silent = true }),
-    init = function()
-      vim.g.barbar_auto_setup = false
-    end,
-    opts = {
-      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-      animation = true,
-      -- insert_at_start = true,
-      -- …etc.
-    },
-    config = function()
-      require('barbar').setup {
-        icons = {
-          filetype = {
-            enabled = false,
-          },
-        },
-      }
-    end,
-
-    version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
   {
     'levouh/tint.nvim',
