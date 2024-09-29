@@ -1,5 +1,4 @@
 --[[
-
 =====================================================================
 ==================== READ THIS BEFORE CONTINUING ====================
 =====================================================================
@@ -148,6 +147,12 @@ vim.opt.splitbelow = true
 --  and `:help 'listchars'`
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- Set up trailing whitespace highlight
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*',
+  command = 'match TrailingWhitespace /\\s\\+$/',
+})
+vim.api.nvim_set_hl(0, 'TrailingWhitespace', { bg = '#990F02' })
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -880,6 +885,9 @@ require('lazy').setup({
         vim.api.nvim_set_hl(0, 'BufferTabpageFill', { fg = '#ffffff' })
       end,
     }),
+    vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#51B3EC', bold = true }),
+    vim.api.nvim_set_hl(0, 'LineNr', { fg = 'white', bold = true }),
+    vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#FB508F', bold = true }),
     opts = {
       -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
       animation = true,
