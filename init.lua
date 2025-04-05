@@ -165,12 +165,24 @@ vim.opt.splitbelow = true
 vim.opt.list = true
 vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 -- Set up trailing whitespace highlight
-vim.api.nvim_create_autocmd('BufEnter', {
-  pattern = '*',
-  command = 'match TrailingWhitespace /\\s\\+$/',
-})
-vim.api.nvim_set_hl(0, 'TrailingWhitespace', { bg = '#990F02' })
+-- Files/buffers where we DON'T want whitespace highlighting
+local exclude_filetypes = { 'markdown', 'text', 'toggleterm', 'NvimTree' }
+local exclude_buftypes = { 'terminal', 'nofile', 'prompt' }
 
+-- Auto-highlight whitespace when entering buffers
+vim.api.nvim_create_autocmd({ 'BufEnter', 'TermOpen' }, {
+  pattern = '*',
+  callback = function()
+    if not vim.tbl_contains(exclude_filetypes, vim.bo.filetype) and not vim.tbl_contains(exclude_buftypes, vim.bo.buftype) then
+      vim.cmd 'match TrailingWhitespace /\\s\\+$/'
+    else
+      vim.cmd 'match none'
+    end
+  end,
+})
+
+-- Visual style for trailing whitespace (red background)
+vim.api.nvim_set_hl(0, 'TrailingWhitespace', { bg = '#990F02' })
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
 
@@ -1115,6 +1127,29 @@ require('lazy').setup({
     end,
   },
   { 'ThePrimeagen/vim-be-good' },
+  {
+    'folke/twilight.nvim',
+    opts = {
+      dimming = {
+        alpha = 0.25, -- Slightly dims inactive text
+        color = { 'Normal', '#ffffff' },
+        term_bg = '#000000',
+        inactive = false,
+      },
+      context = 15, -- Shows 15 lines around cursor
+      treesitter = true, -- Uses Tree-sitter for better code analysis
+      expand = { -- Always shows these code structures fully
+        'function',
+        'method',
+        'table',
+        'if_statement',
+      },
+      exclude = {}, -- No excluded filetypes
+      vim.keymap.set('n', '<leader>tl', '<cmd>Twilight<CR>', { desc = 'Toggle Twilight' }),
+    },
+  },
+  { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
+  -- Note: The keymap should be moved outside the opts table:
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
   -- place them in the correct locations.
@@ -1260,7 +1295,6 @@ ins_left {
       n = colors.red,
       i = colors.green,
       v = colors.blue,
-      [''] = colors.blue,
       V = colors.blue,
       c = colors.magenta,
       no = colors.red,
