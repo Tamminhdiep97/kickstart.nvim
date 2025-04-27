@@ -1149,6 +1149,17 @@ require('lazy').setup({
     },
   },
   { 'ellisonleao/glow.nvim', config = true, cmd = 'Glow' },
+  {
+    'NStefan002/screenkey.nvim',
+    event = 'VimEnter',
+    lazy = false,
+    version = '*', -- or branch = "dev", to use the latest commit
+    config = function()
+      require('screenkey').setup {}
+      vim.cmd [[autocmd VimEnter * Screenkey]]
+    end,
+    vim.keymap.set('n', '<leader>SK', '<cmd>Screenkey<CR>'),
+  },
   -- Note: The keymap should be moved outside the opts table:
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1416,3 +1427,30 @@ ins_right {
 
 -- Now don't forget to initialize lualine
 lualine.setup(config)
+
+local highlight = {
+  'RainbowRed',
+  'RainbowYellow',
+  'RainbowBlue',
+  'RainbowOrange',
+  'RainbowGreen',
+  'RainbowViolet',
+  'RainbowCyan',
+}
+
+local hooks = require 'ibl.hooks'
+-- create the highlight groups in the highlight setup hook, so they are reset
+-- every time the colorscheme changes
+hooks.register(hooks.type.HIGHLIGHT_SETUP, function()
+  -- vim.api.nvim_set_hl(0, 'RainbowRed', { fg = '#E06C60' })
+
+  vim.api.nvim_set_hl(0, 'RainbowRed', { fg = '#BA110C' })
+  vim.api.nvim_set_hl(0, 'RainbowYellow', { fg = '#E5C02B' })
+  vim.api.nvim_set_hl(0, 'RainbowBlue', { fg = '#61AFEF' })
+  vim.api.nvim_set_hl(0, 'RainbowOrange', { fg = '#E06C00' })
+  vim.api.nvim_set_hl(0, 'RainbowGreen', { fg = '#98C379' })
+  vim.api.nvim_set_hl(0, 'RainbowViolet', { fg = '#C678DD' })
+  vim.api.nvim_set_hl(0, 'RainbowCyan', { fg = '#56B6C2' })
+end)
+
+require('ibl').setup { indent = { highlight = highlight } }
