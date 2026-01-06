@@ -243,6 +243,38 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Set colorcolumn for different file types
+-- Default is 80 for Python, but can be customized for other file types
+local filetype_colorcolumn = {
+  python = '80',
+  javascript = '80',
+  typescript = '80',
+  lua = '80',
+  rust = '100',
+  go = '120',
+  -- Add more file types as needed
+  -- Example: to add 120 for C++ files, uncomment the next line:
+  -- cpp = '120',
+}
+
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'python', 'javascript', 'typescript', 'lua', 'rust', 'go' }, -- Add more patterns as needed
+  callback = function()
+    local cc = filetype_colorcolumn[vim.bo.filetype]
+    if cc then
+      vim.opt_local.colorcolumn = cc
+    end
+  end,
+  desc = 'Set colorcolumn based on file type',
+})
+
+-- vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#3E3D32', fg = '#E5C02B' })
+-- To customize colorcolumn for other file types, you can:
+-- 1. Add the file type to the 'pattern' table
+-- 2. Add an entry in the 'filetype_colorcolumn' table
+-- Example for adding markdown files with column at 72:
+-- In filetype_colorcolumn: markdown = '72'
+-- In pattern: { 'python', 'javascript', 'typescript', 'lua', 'rust', 'go', 'markdown' }
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -679,7 +711,11 @@ require('lazy').setup({
       --    :Mason
       --
       --  You can press `g?` for help in this menu.
-      require('mason').setup()
+      require('mason').setup {
+        ui = {
+          border = 'rounded',
+        },
+      }
 
       -- You can add other tools here that you want Mason to install
       -- for you, so that they are available from within Neovim.
@@ -865,7 +901,42 @@ require('lazy').setup({
       }
     end,
   },
-
+  {
+    'scottmckendry/cyberdream.nvim',
+    lazy = false,
+    priority = 1000,
+    config = function()
+      require('cyberdream').setup {
+        transparent = true,
+        italic_comments = true,
+        hide_fillchars = false,
+        borderless_telescope = { border = true, style = 'nvchad' },
+        terminal_colors = true,
+        theme = {
+          variant = 'default',
+        },
+      }
+      vim.cmd 'colorscheme cyberdream'
+      vim.api.nvim_set_hl(0, 'ColorColumn', { bg = '#4E3D32', bold = true })
+    end,
+  },
+  {
+    'mawkler/modicator.nvim',
+    dependencies = 'scottmckendry/cyberdream.nvim', -- Add your colorscheme plugin here
+    init = function()
+      -- These are required for Modicator to work
+      vim.o.cursorline = true
+      vim.o.number = true
+      vim.o.termguicolors = true
+    end,
+    opts = {
+      -- Warn if any required option above is missing. May emit false positives
+      -- if some other plugin modifies them, which in that case you can just
+      -- ignore. Feel free to remove this line after you've gotten Modicator to
+      -- work properly.
+      show_warnings = true,
+    },
+  },
   {
     'romgrk/barbar.nvim',
     requires = 'nvim-tree/nvim-web-devicons',
@@ -899,11 +970,16 @@ require('lazy').setup({
       vim.g.barbar_auto_setup = false
     end,
     vim.cmd [[
-  highlight BufferCurrent guibg=NONE gui=bold,
-  highlight BufferCurrentIndex guibg=NONE gui=bold,
-  highlight BufferCurrentMod guibg=NONE gui=bold,
-  highlight BufferCurrentSign guibg=NONE gui=bold,
-  highlight BufferCurrentTarget guibg=NONE gui=bold,
+  highlight BufferCurrent guibg=#455588 gui=bold,
+  highlight BufferCurrentIndex guibg=#455588 gui=bold,
+  highlight BufferCurrentMod guibg=#455588 gui=bold,
+  highlight BufferCurrentSign guibg=#455588 gui=bold,
+  highlight BufferCurrentTarget guibg=#455588 gui=bold,
+  "highlight BufferInactive guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
+  "highlight BufferInactiveIndex guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
+  "highlight BufferInactiveMod guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
+  "highlight BufferInactiveSign guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
+  "highlight BufferInactiveTarget guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
   highlight BufferTabpages guibg=NONE,
   highlight BufferTabpageFill guibg=NONE gui=NONE,
   ]],
@@ -911,12 +987,15 @@ require('lazy').setup({
       group = vim.api.nvim_create_augroup('config_custom_highlights', {}),
       callback = function()
         -- set your highlights here
-        vim.api.nvim_set_hl(0, 'BufferTabpageFill', { fg = '#ffffff' })
+        vim.api.nvim_set_hl(0, 'BufferTabpageFill', { fg = '#08A045' })
+        -- Additional highlights for better contrast
+        vim.api.nvim_set_hl(0, 'BufferVisible', { bg = '#3a3d5d', fg = '#ffffff', bold = true })
+        vim.api.nvim_set_hl(0, 'BufferVisibleMod', { bg = '#3a3d5d', fg = '#ffcc66', bold = true })
       end,
     }),
-    vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#51B3EC', bold = true }),
-    vim.api.nvim_set_hl(0, 'LineNr', { fg = 'white', bold = true }),
-    vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#FB508F', bold = true }),
+    vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#51B3EC', bold = false }),
+    vim.api.nvim_set_hl(0, 'CursorLineNr', { fg = '#ffffff', bold = false }),
+    vim.api.nvim_set_hl(0, 'LineNrBelow', { fg = '#FB508F', bold = false }),
     opts = {
       -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
       animation = true,
@@ -932,6 +1011,10 @@ require('lazy').setup({
             enabled = true,
           },
         },
+        -- Make sure the buffer highlights are properly applied
+        -- highlight_alternate = false,
+        highlight_inactive_file_icons = false,
+        highlight_visible = true,
       }
     end,
     version = '^1.0.0', -- optional: only update when a new 1.x version is released
@@ -957,24 +1040,7 @@ require('lazy').setup({
   --     vim.cmd.hi 'Comment gui=none'
   --   end,
   -- },
-  {
-    'scottmckendry/cyberdream.nvim',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      require('cyberdream').setup {
-        transparent = true,
-        italic_comments = true,
-        hide_fillchars = false,
-        borderless_telescope = { border = true, style = 'nvchad' },
-        terminal_colors = true,
-        theme = {
-          variant = 'default',
-        },
-      }
-      vim.cmd 'colorscheme cyberdream'
-    end,
-  },
+
   -- {
   --   'AlexvZyl/nordic.nvim',
   --   lazy = false,
@@ -1043,10 +1109,14 @@ require('lazy').setup({
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
-    main = 'nvim-treesitter.configs', -- Sets main module to use for opts
+    lazy = false,
+    branch = 'master',
+    main = 'nvim-treesitter.configs',
+    -- branch = 'main',
+    -- main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'python' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
@@ -1160,6 +1230,7 @@ require('lazy').setup({
     end,
     vim.keymap.set('n', '<leader>SK', '<cmd>Screenkey<CR>'),
   },
+
   -- Note: The keymap should be moved outside the opts table:
   -- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
   -- init.lua. If you want these files, they are in the repository, so you can just download them and
@@ -1202,6 +1273,8 @@ require('lazy').setup({
       task = '📌',
       lazy = '💤 ',
     },
+    -- Add border to Lazy windows
+    border = 'rounded', -- Options: 'single', 'double', 'rounded', 'solid', 'shadow', 'none'
   },
 })
 -- The line beneath this is called `modeline`. See `:help modeline`
@@ -1241,8 +1314,8 @@ local conditions = {
     return gitdir and #gitdir > 0 and #gitdir < #filepath
   end,
 }
-
--- Config
+--
+-- -- Config
 local config = {
   options = {
     -- Disable sections and component separators
@@ -1276,12 +1349,12 @@ local config = {
     lualine_x = {},
   },
 }
-
--- Inserts a component in lualine_c at left section
+--
+-- -- Inserts a component in lualine_c at left section
 local function ins_left(component)
   table.insert(config.sections.lualine_c, component)
 end
-
+--
 -- Inserts a component in lualine_x at right section
 local function ins_right(component)
   table.insert(config.sections.lualine_x, component)
@@ -1298,15 +1371,38 @@ ins_left {
 ins_left {
   -- mode component
   function()
-    return ''
+    -- local m = vim.api.nvim_get_mode().mode
+    local m = vim.fn.mode()
+    local mode_names = {
+      n = '[N]ormal',
+      i = '[I]nsert',
+      v = '[V]isual',
+      V = '[V-L]ine',
+      ['\x16'] = '[V-B]lock', -- Ctrl-v visual block
+      c = '[C]ommand',
+      s = '[S]elect',
+      S = '[S-L]ine',
+      ['\x13'] = '[S-B]lock', -- Ctrl-s
+      R = '[R]eplace',
+      r = '[P]rompt',
+      ['r?'] = '[C]onfirm',
+      ['!'] = '[S]hell',
+      t = '[T]erminal',
+    }
+    return mode_names[m] or m
+    -- return m
   end,
   color = function()
+    -- local m = vim.api.nvim_get_mode().mode
+    local m = vim.fn.mode()
     -- auto change color according to neovims mode
     local mode_color = {
-      n = colors.red,
+      n = colors.blue,
       i = colors.green,
-      v = colors.blue,
-      V = colors.blue,
+      v = colors.yellow,
+      V = colors.yellow,
+      ['\x16'] = colors.yellow,
+      -- ['\x13'] = colors.blue,
       c = colors.magenta,
       no = colors.red,
       s = colors.orange,
@@ -1323,9 +1419,10 @@ ins_left {
       ['!'] = colors.red,
       t = colors.red,
     }
-    return { fg = mode_color[vim.fn.mode()] }
+    local color_value = mode_color[m]
+    return { bg = color_value or colors.magenta, gui = 'bold', fg = '#000000' }
   end,
-  padding = { right = 1 },
+  padding = { right = 2 },
 }
 
 ins_left {
@@ -1382,6 +1479,7 @@ ins_left {
   end,
   icon = ' LSP:',
   color = { fg = '#ffffff', gui = 'bold' },
+  padding = { right = 1 },
 }
 
 -- Add components to right sections
@@ -1425,7 +1523,7 @@ ins_right {
   padding = { left = 1 },
 }
 
--- Now don't forget to initialize lualine
+-- -- Now don't forget to initialize lualine
 lualine.setup(config)
 
 local highlight = {
