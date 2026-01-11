@@ -944,6 +944,15 @@ require('lazy').setup({
     dependencies = {
       'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
     },
+    highlight_alternate = false,
+    highlight_inactive_file_icons = false,
+    highlight_visible = true,
+    -- Enable gitsigns integration
+    gitsigns = {
+      enabled = true,
+      max_count = 99, -- Maximum count of gitsigns to show
+    },
+
     vim.keymap.set('n', '<leader><Tab>', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true }),
     vim.keymap.set('n', '<Tab>', '<Cmd>BufferNext<CR>', { noremap = true, silent = true }),
     vim.keymap.set('n', 'b<', '<Cmd>BufferMovePrevious<CR>', { noremap = true, silent = true }),
@@ -970,11 +979,9 @@ require('lazy').setup({
       vim.g.barbar_auto_setup = false
     end,
     vim.cmd [[
-  highlight BufferCurrent guibg=#455588 gui=bold,
-  highlight BufferCurrentIndex guibg=#455588 gui=bold,
-  highlight BufferCurrentMod guibg=#455588 gui=bold,
-  highlight BufferCurrentSign guibg=#455588 gui=bold,
-  highlight BufferCurrentTarget guibg=#455588 gui=bold,
+  "highlight BufferCurrent guibg=#455588 gui=bold guifg=#ffffff,
+  "highlight BufferCurrentIndex guibg=#455588 gui=bold guifg=#ffffff,
+  "highlight BufferCurrentSign guibg=#455588 gui=bold guifg=#ffffff,
   "highlight BufferInactive guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
   "highlight BufferInactiveIndex guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
   "highlight BufferInactiveMod guibg=#1a1a2e guifg=#a0a0b0 gui=NONE,
@@ -991,6 +998,17 @@ require('lazy').setup({
         -- Additional highlights for better contrast
         vim.api.nvim_set_hl(0, 'BufferVisible', { bg = '#3a3d5d', fg = '#ffffff', bold = true })
         vim.api.nvim_set_hl(0, 'BufferVisibleMod', { bg = '#3a3d5d', fg = '#ffcc66', bold = true })
+        vim.api.nvim_set_hl(0, 'BufferCurrent', { bg = '#3a3d5d', fg = '#ffffff', bold = true })
+        -- vim.api.nvim_set_hl(0, 'BufferCurrentSign ', { bg = '#3a3d5d', fg = '#ffffff', bold = true })
+        vim.api.nvim_set_hl(0, 'BufferCurrentMod', { bg = '#3a3d5d', fg = '#ffcc66', bold = true })
+        vim.api.nvim_set_hl(0, 'BufferInactiveMod', { bg = '#3a3d5d', fg = '#ffcc66', bold = true })
+
+        -- vim.api.nvim_set_hl(0, 'BufferSignAdd', { fg = '#ffff00' }) -- Yellow for added
+        -- vim.api.nvim_set_hl(0, 'BufferSignChange', { fg = '#ffff00' }) -- Yellow for changed
+        -- vim.api.nvim_set_hl(0, 'BufferSignDelete', { fg = '#ffff00' }) -- Yellow for deleted
+        -- vim.api.nvim_set_hl(0, 'BufferSignTopDelete', { fg = '#ffff00' }) -- Yellow for top delete
+        -- vim.api.nvim_set_hl(0, 'BufferSignChangedelete', { fg = '#ffff00' }) -- Yellow for changedelete
+        -- vim.api.nvim_set_hl(0, 'BufferGitDelete', { fg = '#ffff00' })
       end,
     }),
     vim.api.nvim_set_hl(0, 'LineNrAbove', { fg = '#51B3EC', bold = false }),
@@ -1019,54 +1037,6 @@ require('lazy').setup({
     end,
     version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
-  -- { -- You can easily change to a different colorscheme.
-  --   -- Change the name of the colorscheme plugin below, and then
-  --   -- change the command in the config to whatever the name of that colorscheme is.
-  --   --
-  --   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-  --   'scottmckendry/cyberdream.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   -- 'folke/tokyonight.nvim',
-  --   -- priority = 1000, -- Make sure to load this before all the other start plugins.
-  --   init = function()
-  --     -- Load the colorscheme here.
-  --     -- Like many other themes, this one has different styles, and you could load
-  --     -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-  --     -- vim.cmd.colorscheme 'tokyonight-night'
-  --     vim.cmd.colorscheme 'cyberdream'
-
-  --     -- You can configure highlights by doing something like:
-  --     vim.cmd.hi 'Comment gui=none'
-  --   end,
-  -- },
-
-  -- {
-  --   'AlexvZyl/nordic.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     require('nordic').load()
-  --     vim.cmd.colorscheme 'nordic'
-  --   end,
-  -- },
-  -- {
-  --   'rebelot/kanagawa.nvim',
-  --   lazy = false,
-  --   priority = 1000,
-  --   config = function()
-  --     require('kanagawa').setup {
-
-  --       -- Customize your theme here
-  --       -- dimInactive = true,
-  --       theme = 'wave',
-  --       background = {
-  --         dark = 'wave',
-  --       },
-  --     }
-  --     vim.cmd.colorscheme 'kanagawa'
-  --   end,
-  -- },
   -- Highlight todo, notes, etc in comments
   { 'folke/todo-comments.nvim', event = 'VimEnter', dependencies = { 'nvim-lua/plenary.nvim' }, opts = { signs = false } },
   { -- Collection of various small independent plugins/modules
